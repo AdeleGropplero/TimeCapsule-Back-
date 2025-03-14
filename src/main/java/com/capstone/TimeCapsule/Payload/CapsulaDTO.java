@@ -21,6 +21,8 @@ public class CapsulaDTO {
     @NotBlank(message = "Il titolo è obbligatorio")
     private String title;
 
+    private LocalDate creationDate;
+
     @NotNull(message = "La data di apertura è obbligatoria")
     private LocalDate openDate;
 

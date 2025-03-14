@@ -30,7 +30,7 @@ public class CapsulaService {
 
     public List<CapsulaDTO> findAllById(String idUtente) {
         UUID id = UUID.fromString(idUtente);
-        List<Capsula> capsule = capsulaRepository.findByIdUtente(id);
+        List<Capsula> capsule = capsulaRepository.findByUtente_Id(id);
 
         List<CapsulaDTO> capsuleDTO = new ArrayList<>();
         for (Capsula cap : capsule) {

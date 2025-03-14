@@ -29,6 +29,7 @@ public class CapsulaTravaso {
 
         // Mappatura dei campi base
         capsula.setTitle(dto.getTitle());
+        capsula.setCreationDate(dto.getCreationDate());
         capsula.setOpenDate(dto.getOpenDate());
         capsula.setEmail(dto.getEmail());
         capsula.setMessage(dto.getMessage());

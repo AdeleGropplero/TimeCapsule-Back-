@@ -8,12 +8,14 @@ import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.CapsulaService;
 import com.capstone.TimeCapsule.Service.CloudinaryService;
+import com.capstone.TimeCapsule.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -22,11 +24,13 @@ public class Controller {
     private final CapsulaService capsulaService;
     private final CloudinaryService cloudinaryService;
     private final CapsulaTravaso capsulaTravaso;
+    private final EmailService emailService;
 
-    public Controller(CapsulaService capsulaService, CloudinaryService cloudinaryService, CapsulaTravaso capsulaTravaso) {
+    public Controller(CapsulaService capsulaService, CloudinaryService cloudinaryService, CapsulaTravaso capsulaTravaso, EmailService emailService) {
         this.capsulaService = capsulaService;
         this.cloudinaryService = cloudinaryService;
         this.capsulaTravaso = capsulaTravaso;
+        this.emailService = emailService;
     }
 
     @GetMapping("/home")
@@ -52,6 +56,7 @@ public class Controller {
 
         CapsulaDTO dto = new CapsulaDTO();
         dto.setTitle(title);
+        dto.setCreationDate(LocalDate.now());
         dto.setOpenDate(java.time.LocalDate.parse(openDate)); //openDate("") viene convertito in un oggetto LocalDate
         dto.setEmail(email);
         dto.setMessage(message);
@@ -107,11 +112,13 @@ public class Controller {
         // Salvataggio della capsula
         Capsula capsulaEntity = capsulaTravaso.dto_entity(dto, idUtente);
         Capsula savedCapsula = capsulaService.saveCap(capsulaEntity);
+        emailService.sendEmail(email, "Capsula creata con successo!",
+                "La tua capsula '" + title + "' è stata creata. Riceverai un'email il giorno " + openDate + " quando sarà il momento di aprirla.");
         return ResponseEntity.ok(capsulaTravaso.entity_dto(savedCapsula));
     }
 
-    @GetMapping("/le-mie-caps")
-    public ResponseEntity<?> getCaps(String id) {
+    @GetMapping("/le-mie-caps/{id}")
+    public ResponseEntity<?> getCaps(@PathVariable String id) {
        List<CapsulaDTO> caps = capsulaService.findAllById(id);
         return ResponseEntity.ok(caps);
     }

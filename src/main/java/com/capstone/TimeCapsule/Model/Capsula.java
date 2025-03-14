@@ -25,12 +25,20 @@ public class Capsula {
 
     @Column(nullable = false)
     private String title;
+
+    private LocalDate creationDate;
+
     @Column(nullable = false)
     private LocalDate openDate;
+
     @Column(nullable = false)
     private String email;
+
     private String message;
+
     private boolean pubblica;
+
+    @Enumerated( EnumType.STRING)
     private TipoCapsula capsula;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
