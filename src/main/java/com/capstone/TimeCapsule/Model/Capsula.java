@@ -43,11 +43,11 @@ public class Capsula {
     @Enumerated( EnumType.STRING)
     private TipoCapsula capsula;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "capsula_id")
     private Set<VisualMedia> media = new HashSet<>(); // Set di media, se mi servirà l'ordine di inserimento metti List
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "capsula_id")
     private Set<TextFile> textFiles  = new HashSet<>();
 

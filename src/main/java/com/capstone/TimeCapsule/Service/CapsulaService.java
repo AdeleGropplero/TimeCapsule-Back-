@@ -62,32 +62,17 @@ public class CapsulaService {
     }
 
 
-    @Transactional
+/*    @Transactional
     public void deleteCapsula(String idCapsula) {
         UUID id = UUID.fromString(idCapsula);
         Capsula cap = capsulaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Capsula non trovata"));
 
-        // Rimozione dei media associati usando un Iterator
-        Iterator<VisualMedia> mediaIterator = cap.getMedia().iterator();
-        while (mediaIterator.hasNext()) {
-            VisualMedia media = mediaIterator.next();
-            visualMediaRepository.delete(media);
-            mediaIterator.remove(); // ✅ Sicuro
-        }
-
-        // Rimozione dei file di testo associati usando un Iterator
-        Iterator<TextFile> textFileIterator = cap.getTextFiles().iterator();
-        while (textFileIterator.hasNext()) {
-            TextFile textFile = textFileIterator.next();
-            textFilesRepository.delete(textFile);
-            textFileIterator.remove(); // ✅ Sicuro
-        }
-
-        // Elimina la capsula
+        cap.getMedia().clear(); // Hibernate cancellerà gli elementi associati
+        cap.getTextFiles().clear();
         capsulaRepository.delete(cap);
-    }
 
+    }*/
 
 
 

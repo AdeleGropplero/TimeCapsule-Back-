@@ -206,11 +206,13 @@ public class Controller {
         }
     }
 
+/*
     @DeleteMapping("/capsula/{idCap}")
     public ResponseEntity<?> deleteSelectedCap(@PathVariable String idCap) {
         capsulaService.deleteCapsula(idCap);
        return ResponseEntity.ok("Capsula cancellata correttamente");
     }
+*/
 
 
 
