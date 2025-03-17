@@ -9,6 +9,7 @@ import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Repository.CapsulaRepository;
 import com.capstone.TimeCapsule.Repository.TextFilesRepository;
 import com.capstone.TimeCapsule.Repository.VisualMediaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,13 @@ public class CapsulaService {
         return cap;
     }
 
+
+    public void deleteCapsula(String id) {
+        UUID idCap = UUID.fromString(id);
+        Capsula capsula = capsulaRepository.findById(idCap)
+                .orElseThrow(() -> new EntityNotFoundException("Capsula non trovata con ID: " + id));
+        capsulaRepository.deleteCapsulaById(idCap);
+    }
 
 /*    @Transactional
     public void deleteCapsula(String idCapsula) {

@@ -11,6 +11,7 @@ import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.CapsulaService;
 import com.capstone.TimeCapsule.Service.CloudinaryService;
 import com.capstone.TimeCapsule.Service.EmailService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -206,13 +207,23 @@ public class Controller {
         }
     }
 
-/*
-    @DeleteMapping("/capsula/{idCap}")
-    public ResponseEntity<?> deleteSelectedCap(@PathVariable String idCap) {
-        capsulaService.deleteCapsula(idCap);
-       return ResponseEntity.ok("Capsula cancellata correttamente");
+
+    @DeleteMapping("/capsula/{id}")
+    public ResponseEntity<String> deleteCapsula(@PathVariable String id) {
+        try {
+            System.out.println("Tentativo di eliminazione capsula con ID: " + id);
+            capsulaService.deleteCapsula(id);
+            return ResponseEntity.ok("Capsula eliminata con successo.");
+        } catch (EntityNotFoundException e) {
+            System.err.println("Errore: Capsula non trovata - ID: " + id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Capsula non trovata.");
+        } catch (Exception e) {
+            System.err.println("Errore durante l'eliminazione della capsula: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore interno.");
+        }
     }
-*/
+
 
 
 
