@@ -34,6 +34,8 @@ public class Capsula {
     @Column(nullable = false)
     private String email;
 
+ /*   @Lob  // Permette di salvare grandi quantità di testo
+    @Column(columnDefinition = "TEXT")*/
     private String message;
 
     private boolean pubblica;
@@ -41,16 +43,24 @@ public class Capsula {
     @Enumerated( EnumType.STRING)
     private TipoCapsula capsula;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "capsula_id")
     private Set<VisualMedia> media = new HashSet<>(); // Set di media, se mi servirà l'ordine di inserimento metti List
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "capsula_id")
     private Set<TextFile> textFiles  = new HashSet<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Utente utente;
+
+    public void removeMedia(VisualMedia media) {
+        this.media.remove(media);  // Rimuove il media dalla capsula
+    }
+
+    public void removeTextFile(TextFile textFile) {
+        this.textFiles.remove(textFile);  // Rimuove il file di testo dalla capsula
+    }
 
 
 

@@ -3,6 +3,8 @@ package com.capstone.TimeCapsule.Controller;
 import com.capstone.TimeCapsule.Enum.TipoCapsula;
 import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
+import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
+import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
@@ -10,6 +12,7 @@ import com.capstone.TimeCapsule.Service.CapsulaService;
 import com.capstone.TimeCapsule.Service.CloudinaryService;
 import com.capstone.TimeCapsule.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,5 +125,93 @@ public class Controller {
        List<CapsulaDTO> caps = capsulaService.findAllById(id);
         return ResponseEntity.ok(caps);
     }
+
+    @GetMapping("/capsula/{idCap}")
+    public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
+        CapsulaDTO capsulaDTO = capsulaTravaso.entity_dto(capsulaService.findById(idCap));
+        return ResponseEntity.ok(capsulaDTO);
+    }
+
+    //---------------------------------------------------------------------------------------
+    //UPDATE - PUT
+    //---------------------------------------------------------------------------------------
+
+    @PutMapping("capsula/{id}/update")
+    public ResponseEntity<String> updateCapsula(
+            @PathVariable String id,
+            @RequestParam("title") String title,
+            @RequestParam("message") String message,
+            @RequestParam(value = "media", required = false) List<MultipartFile> media,
+            @RequestParam(value = "textFiles", required = false) List<MultipartFile> textFiles,
+            @RequestParam(value = "removeMedia", required = false) List<String> removeMediaUrls,
+            @RequestParam(value = "removeTextFiles", required = false) List<String> removeTextFileUrls
+    ) {
+        try {
+            // Trova la capsula esistente
+            Capsula existingCapsula = capsulaService.findById(id);
+            if (existingCapsula == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Capsula non trovata.");
+            }
+
+            // Aggiorna i campi di testo
+            existingCapsula.setTitle(title);
+            existingCapsula.setMessage(message);
+
+            // Rimuove i file multimediali specificati dall'utente
+            if (removeMediaUrls != null) {
+                existingCapsula.getMedia().removeIf(newMedia -> removeMediaUrls.contains(newMedia.getUrl()));
+            }
+
+            // Rimuove i file di testo specificati dall'utente
+            if (removeTextFileUrls != null) {
+                existingCapsula.getTextFiles().removeIf(textFile -> removeTextFileUrls.contains(textFile.getUrl()));
+            }
+
+            // Aggiunge i nuovi file multimediali
+            if (media != null) {
+                for (MultipartFile file : media) {
+                    if (file.getSize() > 3 * 1024 * 1024) {
+                        return ResponseEntity.badRequest().body("File troppo grande: " + file.getOriginalFilename());
+                    }
+                    String url = cloudinaryService.uploadFile(file);
+                    VisualMedia newMedia = new VisualMedia();
+                    newMedia.setName(file.getOriginalFilename());
+                    newMedia.setType(file.getContentType());
+                    newMedia.setUrl(url);
+                    existingCapsula.getMedia().add(newMedia);
+                }
+            }
+
+            // Aggiunge i nuovi file di testo
+            if (textFiles != null) {
+                for (MultipartFile file : textFiles) {
+                    if (file.getSize() > 3 * 1024 * 1024) {
+                        return ResponseEntity.badRequest().body("File troppo grande: " + file.getOriginalFilename());
+                    }
+                    String url = cloudinaryService.uploadFile(file);
+                    TextFile newTextFile = new TextFile();
+                    newTextFile.setName(file.getOriginalFilename());
+                    newTextFile.setType(file.getContentType());
+                    newTextFile.setUrl(url);
+                    existingCapsula.getTextFiles().add(newTextFile);
+                }
+            }
+
+            // Salva la capsula aggiornata
+            capsulaService.saveCap(existingCapsula);
+            return ResponseEntity.ok("Capsula aggiornata con successo!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante l'aggiornamento.");
+        }
+    }
+
+    @DeleteMapping("/capsula/{idCap}")
+    public ResponseEntity<?> deleteSelectedCap(@PathVariable String idCap) {
+        capsulaService.deleteCapsula(idCap);
+       return ResponseEntity.ok("Capsula cancellata correttamente");
+    }
+
+
 
 }

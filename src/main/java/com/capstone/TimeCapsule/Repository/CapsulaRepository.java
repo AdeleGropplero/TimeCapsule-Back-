@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface CapsulaRepository extends JpaRepository<Capsula, UUID> {
     List<Capsula> findByUtente_Id(UUID idUtente);
     List<Capsula> findByOpenDate(LocalDate openDate);
+
 }
