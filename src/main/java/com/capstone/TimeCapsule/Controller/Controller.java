@@ -7,12 +7,13 @@ import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
+import com.capstone.TimeCapsule.Payload.UtenteProfiloDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.CapsulaService;
 import com.capstone.TimeCapsule.Service.CloudinaryService;
 import com.capstone.TimeCapsule.Service.EmailService;
+import com.capstone.TimeCapsule.Service.UtenteService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,14 @@ public class Controller {
     private final CloudinaryService cloudinaryService;
     private final CapsulaTravaso capsulaTravaso;
     private final EmailService emailService;
+    private final UtenteService utenteService;
 
-    public Controller(CapsulaService capsulaService, CloudinaryService cloudinaryService, CapsulaTravaso capsulaTravaso, EmailService emailService) {
+    public Controller(CapsulaService capsulaService, CloudinaryService cloudinaryService, CapsulaTravaso capsulaTravaso, EmailService emailService, UtenteService utenteService) {
         this.capsulaService = capsulaService;
         this.cloudinaryService = cloudinaryService;
         this.capsulaTravaso = capsulaTravaso;
         this.emailService = emailService;
+        this.utenteService = utenteService;
     }
 
     @GetMapping("/home")
@@ -43,6 +46,12 @@ public class Controller {
         response.put("message", "Accesso consentito!");
         return ResponseEntity.ok(response);
     }
+
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+    //CAPSULE
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
 
     @PostMapping("/create-personal")
     public ResponseEntity<?> createCapsula(
@@ -222,6 +231,18 @@ public class Controller {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore interno.");
         }
+    }
+
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+    //PROFILO
+    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------
+
+    @GetMapping("/profilo/{id}")
+    public ResponseEntity<UtenteProfiloDTO> getUtente(@PathVariable String id) {
+        UtenteProfiloDTO profilo = utenteService.getProfilo(id);
+        return ResponseEntity.ok(profilo);
     }
 
 

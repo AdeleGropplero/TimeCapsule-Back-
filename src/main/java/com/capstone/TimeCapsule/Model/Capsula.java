@@ -9,9 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "capsule")
@@ -36,7 +34,8 @@ public class Capsula {
 
  /*   @Lob  // Permette di salvare grandi quantità di testo
     @Column(columnDefinition = "TEXT")*/
-    private String message;
+ @Column(length = 10000)
+ private String message;
 
     private boolean pubblica;
 
@@ -44,13 +43,14 @@ public class Capsula {
     private TipoCapsula capsula;
 
     @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<VisualMedia> media = new HashSet<>();
+    private List<VisualMedia> media = new ArrayList<>();
      // Set di media, se mi servirà l'ordine di inserimento metti List
 
     @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TextFile> textFiles  = new HashSet<>();
+    private List<TextFile> textFiles  = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "utente_id")
     private Utente utente;
 
     public void removeMedia(VisualMedia media) {
@@ -59,6 +59,18 @@ public class Capsula {
 
     public void removeTextFile(TextFile textFile) {
         this.textFiles.remove(textFile);  // Rimuove il file di testo dalla capsula
+    }
+
+    public boolean isPersonale() {
+        return this.capsula == TipoCapsula.PERSONALE;
+    }
+
+    public boolean isDiGruppo() {
+        return this.capsula == TipoCapsula.GRUPPO;
+    }
+
+    public boolean isEvento() {
+        return this.capsula == TipoCapsula.EVENTO;
     }
 
 

@@ -36,8 +36,8 @@ public class Utente implements UserDetails {
     @JoinColumn(name = "ruolo_id")
     private Ruolo ruolo;
 
-    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Capsula> capsule = new HashSet<>();
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Capsula> capsule = new ArrayList<>();
 
     public Utente(String fullName, String email, String password) {
         this.fullName = fullName;

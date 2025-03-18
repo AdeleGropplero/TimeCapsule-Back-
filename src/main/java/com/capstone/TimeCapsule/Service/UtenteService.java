@@ -4,8 +4,10 @@ import com.capstone.TimeCapsule.Authentication.Request.LoginRequest;
 import com.capstone.TimeCapsule.Authentication.Request.RegistrationRequest;
 import com.capstone.TimeCapsule.Exception.EmailDuplicateException;
 import com.capstone.TimeCapsule.Exception.UtenteNonTrovatoException;
+import com.capstone.TimeCapsule.Mapper_travasi.UtenteProfiloTravaso;
 import com.capstone.TimeCapsule.Model.Ruolo;
 import com.capstone.TimeCapsule.Model.Utente;
+import com.capstone.TimeCapsule.Payload.UtenteProfiloDTO;
 import com.capstone.TimeCapsule.Repository.UtenteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,14 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
-@Transactional
+
 public class UtenteService {
 
     @Autowired
     UtenteRepository utenteRepository;
+
+    @Autowired
+    UtenteProfiloTravaso profiloTravaso;
 
     private final PasswordEncoder passwordEncoder;
     @Autowired
@@ -30,6 +35,7 @@ public class UtenteService {
     @Autowired
     RuoloService ruoloService;
 
+    @Transactional
     public String salvaUtente(RegistrationRequest newUtente){
         checkDuplicatedKey(newUtente.getEmail());
         String encodedPassword = passwordEncoder.encode(newUtente.getPassword());
@@ -63,6 +69,14 @@ public class UtenteService {
     public Utente findByEmail(String email){
         return utenteRepository.findByEmail(email).orElseThrow(()->
                 new UtenteNonTrovatoException("Nessun Utente trovato con email: " + email));
+    }
+
+    public UtenteProfiloDTO getProfilo(String id){
+        UUID idUtente = UUID.fromString(id);
+        Utente utente = utenteRepository.findById(idUtente).orElseThrow(()->
+                new UtenteNonTrovatoException("Nessun Utente trovato con id: " + id));
+        UtenteProfiloDTO profilo = profiloTravaso.entity_dto(utente);
+        return profilo;
     }
 
 //-----------------------------------------------------------------------------------------------------

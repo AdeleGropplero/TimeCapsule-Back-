@@ -11,6 +11,7 @@ import com.capstone.TimeCapsule.Service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,25 +46,25 @@ public class CapsulaTravaso {
         capsula.setUtente(utente);
 
         // Mappatura dei file media
-        Set<VisualMedia> mediaList = dto.getMedia().stream()
+        List<VisualMedia> mediaList = dto.getMedia().stream()
                 .map(fileDTO -> {
                     VisualMedia media = new VisualMedia();
                     media.setUrl(fileDTO.getUrl());
                     media.setName(fileDTO.getName());
                     media.setType(fileDTO.getType());
                     return media;
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
         capsula.setMedia(mediaList);
 
         // Mappatura dei file di testo
-        Set<TextFile> textFileList = dto.getTextFiles().stream()
+        List<TextFile> textFileList = dto.getTextFiles().stream()
                 .map(fileDTO -> {
                     TextFile textFile = new TextFile();
                     textFile.setUrl(fileDTO.getUrl());
                     textFile.setName(fileDTO.getName());
                     textFile.setType(fileDTO.getType());
                     return textFile;
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
         capsula.setTextFiles(textFileList);
 
         return capsula;

@@ -5,6 +5,7 @@ import com.capstone.TimeCapsule.Enum.TipoCapsula;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class CapsulaDTO {
     @Email(message = "Formato email non valido")
     private String email;
 
+    @Size(max = 10000, message = "Il messaggio non può superare i 10000 caratteri")
     private String message;
 
     @NotNull(message = "Il campo 'pubblica' è obbligatorio")

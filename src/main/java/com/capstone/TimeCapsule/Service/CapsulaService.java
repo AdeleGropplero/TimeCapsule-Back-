@@ -1,10 +1,7 @@
 package com.capstone.TimeCapsule.Service;
 
-import com.capstone.TimeCapsule.Exception.ResourceNotFoundException;
 import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
-import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
-import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Repository.CapsulaRepository;
 import com.capstone.TimeCapsule.Repository.TextFilesRepository;
@@ -17,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-@Transactional
+
 public class CapsulaService {
     private final CloudinaryService cloudinaryService;
     private final TextFilesRepository textFilesRepository;
@@ -35,12 +32,13 @@ public class CapsulaService {
     @Autowired
     private CapsulaTravaso capsulaTravaso;
 
+    @Transactional
     public Capsula saveCap(Capsula caps) {
         return capsulaRepository.save(caps);
     }
 
-    public Set<Capsula> getAllCapsule() {
-        return new HashSet<>(capsulaRepository.findAll());
+    public List<Capsula> getAllCapsule() {
+        return new ArrayList<>(capsulaRepository.findAll());
     }
 
     public List<CapsulaDTO> findAllById(String idUtente) {
@@ -63,6 +61,7 @@ public class CapsulaService {
     }
 
 
+    @Transactional
     public void deleteCapsula(String id) {
         UUID capsulaId = UUID.fromString(id);
         Capsula capsula = capsulaRepository.findById(capsulaId)
