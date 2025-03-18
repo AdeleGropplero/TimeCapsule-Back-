@@ -64,23 +64,14 @@ public class CapsulaService {
 
 
     public void deleteCapsula(String id) {
-        UUID idCap = UUID.fromString(id);
-        Capsula capsula = capsulaRepository.findById(idCap)
+        UUID capsulaId = UUID.fromString(id);
+        Capsula capsula = capsulaRepository.findById(capsulaId)
                 .orElseThrow(() -> new EntityNotFoundException("Capsula non trovata con ID: " + id));
-        capsulaRepository.deleteCapsulaById(idCap);
+        visualMediaRepository.deleteMediaByCapsulaId(capsulaId);
+        textFilesRepository.deleteMediaByCapsulaId(capsulaId);
+        capsulaRepository.deleteCapsulaById(capsulaId);
     }
 
-/*    @Transactional
-    public void deleteCapsula(String idCapsula) {
-        UUID id = UUID.fromString(idCapsula);
-        Capsula cap = capsulaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Capsula non trovata"));
-
-        cap.getMedia().clear(); // Hibernate cancellerà gli elementi associati
-        cap.getTextFiles().clear();
-        capsulaRepository.delete(cap);
-
-    }*/
 
 
 
