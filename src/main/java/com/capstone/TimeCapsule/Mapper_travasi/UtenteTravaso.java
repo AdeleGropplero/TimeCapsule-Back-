@@ -1,7 +1,7 @@
 package com.capstone.TimeCapsule.Mapper_travasi;
 
 import com.capstone.TimeCapsule.Model.Utente;
-import com.capstone.TimeCapsule.Payload.UtenteDTO;
+import com.capstone.TimeCapsule.Payload.utente.UtenteDTO;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,13 +2,11 @@ package com.capstone.TimeCapsule.Mapper_travasi;
 
 import com.capstone.TimeCapsule.Model.Capsula;
 import com.capstone.TimeCapsule.Model.Utente;
-import com.capstone.TimeCapsule.Payload.UtenteProfiloDTO;
-import jakarta.transaction.Transactional;
+import com.capstone.TimeCapsule.Payload.utente.UtenteProfiloDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class UtenteProfiloTravaso {

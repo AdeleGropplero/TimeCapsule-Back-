@@ -1,4 +1,4 @@
-package com.capstone.TimeCapsule.Payload;
+package com.capstone.TimeCapsule.Payload.utente;
 
 import lombok.Data;
 

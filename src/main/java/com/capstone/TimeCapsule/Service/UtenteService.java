@@ -1,13 +1,13 @@
 package com.capstone.TimeCapsule.Service;
 
-import com.capstone.TimeCapsule.Authentication.Request.LoginRequest;
 import com.capstone.TimeCapsule.Authentication.Request.RegistrationRequest;
 import com.capstone.TimeCapsule.Exception.EmailDuplicateException;
 import com.capstone.TimeCapsule.Exception.UtenteNonTrovatoException;
 import com.capstone.TimeCapsule.Mapper_travasi.UtenteProfiloTravaso;
 import com.capstone.TimeCapsule.Model.Ruolo;
 import com.capstone.TimeCapsule.Model.Utente;
-import com.capstone.TimeCapsule.Payload.UtenteProfiloDTO;
+import com.capstone.TimeCapsule.Payload.utente.ProfiloUpdateDTO;
+import com.capstone.TimeCapsule.Payload.utente.UtenteProfiloDTO;
 import com.capstone.TimeCapsule.Repository.UtenteRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +77,18 @@ public class UtenteService {
                 new UtenteNonTrovatoException("Nessun Utente trovato con id: " + id));
         UtenteProfiloDTO profilo = profiloTravaso.entity_dto(utente);
         return profilo;
+    }
+
+    @Transactional
+    public UtenteProfiloDTO patchProfilo(String id, ProfiloUpdateDTO dto){
+        UUID idUtente = UUID.fromString(id);
+        Utente utente = utenteRepository.findById(idUtente).orElseThrow(()->
+                new UtenteNonTrovatoException("Nessun Utente trovato con id: " + id));
+
+        utente.setFullName(dto.getFullName());
+        utente.setEmail(dto.getEmail());
+
+        return profiloTravaso.entity_dto(utente);
     }
 
 //-----------------------------------------------------------------------------------------------------

@@ -5,15 +5,18 @@ import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
+import com.capstone.TimeCapsule.Model.Utente;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
-import com.capstone.TimeCapsule.Payload.UtenteProfiloDTO;
+import com.capstone.TimeCapsule.Payload.utente.ProfiloUpdateDTO;
+import com.capstone.TimeCapsule.Payload.utente.UtenteProfiloDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.CapsulaService;
 import com.capstone.TimeCapsule.Service.CloudinaryService;
 import com.capstone.TimeCapsule.Service.EmailService;
 import com.capstone.TimeCapsule.Service.UtenteService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -245,7 +248,10 @@ public class Controller {
         return ResponseEntity.ok(profilo);
     }
 
-
+    @PatchMapping("/profilo/{id}")
+    public ResponseEntity<UtenteProfiloDTO> updateProfilo(@PathVariable String id, @RequestBody @Valid ProfiloUpdateDTO dto) {
+        return ResponseEntity.ok(utenteService.patchProfilo(id, dto));
+    }
 
 
 }
