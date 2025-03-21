@@ -8,7 +8,9 @@ import com.capstone.TimeCapsule.Exception.PassworErrataException;
 import com.capstone.TimeCapsule.Exception.UnauthorizedException;
 import com.capstone.TimeCapsule.Exception.UtenteNonTrovatoException;
 import com.capstone.TimeCapsule.Model.Utente;
+import com.capstone.TimeCapsule.Repository.UtenteRepository;
 import com.capstone.TimeCapsule.Security.JWT.JwtUtil;
+import com.capstone.TimeCapsule.Service.EmailService;
 import com.capstone.TimeCapsule.Service.UtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,9 @@ import java.util.UUID;
 public class AuthController {
 
     @Autowired
+    UtenteRepository utenteRepository;
+
+    @Autowired
     UtenteService utenteService;
 
     @Autowired
@@ -35,6 +40,9 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder bcrypt;
+
+    @Autowired
+    EmailService emailService;
 
     @PostMapping("/")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest body) throws UtenteNonTrovatoException, UnauthorizedException {
@@ -61,7 +69,9 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<String> registrazioneUtente(@RequestBody @Validated RegistrationRequest nuovoUtente, BindingResult validation) {
-
+        if (utenteRepository.existsByEmail(nuovoUtente.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email già in uso");
+        }
         if (validation.hasErrors()) {
             StringBuilder messaggio = new StringBuilder("Problemi nella validazione dei dati: \n");
 
@@ -72,9 +82,9 @@ public class AuthController {
         }
         try {
             String salvaUtenteMessaggio = utenteService.salvaUtente(nuovoUtente);
+            emailService.sendEmail(nuovoUtente.getEmail(), "Registrazione avvenuta correttamente!", "Congratulazioni TimeTraveler! Adesso puoi cominciare a creare le tue capsule del tempo, da solo o in compagnia!" );
 
             return new ResponseEntity<>(salvaUtenteMessaggio, HttpStatus.CREATED);
-
         } catch (EmailDuplicateException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

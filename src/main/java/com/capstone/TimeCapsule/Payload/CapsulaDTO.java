@@ -43,5 +43,5 @@ public class CapsulaDTO {
     private Set<VisualMediaDTO> media;
     private Set<TextFileDTO> textFiles;
 
-    private UUID utenteId;
+    private Set<UUID> utentiIds;
 }

@@ -13,8 +13,16 @@ import java.util.UUID;
 
 @Repository
 public interface CapsulaRepository extends JpaRepository<Capsula, UUID> {
-    List<Capsula> findByUtente_Id(UUID idUtente);
+    //restituisce tutte le capsule associate a un utente specifico
+    List<Capsula> findByUtenti_Id(UUID idUtente);
+
+    // Trova tutte le capsule con una data di apertura specifica
     List<Capsula> findByOpenDate(LocalDate openDate);
+
+    // Trova tutte le capsule pubbliche
+    List<Capsula> findByPubblicaTrue(); //da usare per il search
+
+    // Elimina una capsula specifica
     @Modifying
     @Query("DELETE FROM Capsula c WHERE c.id = :id")
     void deleteCapsulaById(@Param("id") UUID id);

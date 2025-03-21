@@ -1,6 +1,7 @@
 package com.capstone.TimeCapsule.Model;
 
 import com.capstone.TimeCapsule.Enum.TipoCapsula;
+import com.capstone.TimeCapsule.Model.MediaFile.Invito;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import jakarta.persistence.*;
@@ -32,34 +33,34 @@ public class Capsula {
     @Column(nullable = false)
     private String email;
 
- /*   @Lob  // Permette di salvare grandi quantità di testo
-    @Column(columnDefinition = "TEXT")*/
- @Column(length = 10000)
- private String message;
+    @Column(length = 10000)
+    private String message;
 
     private boolean pubblica;
 
-    @Enumerated( EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private TipoCapsula capsula;
 
     @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VisualMedia> media = new ArrayList<>();
-     // Set di media, se mi servirà l'ordine di inserimento metti List
+    // Set di media, se mi servirà l'ordine di inserimento metti List
 
     @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TextFile> textFiles  = new ArrayList<>();
+    private List<TextFile> textFiles = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "utente_id")
-    private Utente utente;
+    @ManyToMany
+    @JoinTable(
+            name = "capsula_utente",
+            joinColumns = @JoinColumn(name = "capsula_id"),
+            inverseJoinColumns = @JoinColumn(name = "utente_id")
+    )
+    private Set<Utente> utenti = new HashSet<>();
 
-    public void removeMedia(VisualMedia media) {
-        this.media.remove(media);  // Rimuove il media dalla capsula
-    }
+    @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Invito> inviti = new HashSet<>();
 
-    public void removeTextFile(TextFile textFile) {
-        this.textFiles.remove(textFile);  // Rimuove il file di testo dalla capsula
-    }
+    //-------------------------------------------------
+
 
     public boolean isPersonale() {
         return this.capsula == TipoCapsula.PERSONALE;
@@ -73,6 +74,22 @@ public class Capsula {
         return this.capsula == TipoCapsula.EVENTO;
     }
 
-
+    @Override
+    public String toString() {
+        return "Capsula{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", creationDate=" + creationDate +
+                ", openDate=" + openDate +
+                ", email='" + email + '\'' +
+                ", message='" + message + '\'' +
+                ", pubblica=" + pubblica +
+                ", capsula=" + capsula +
+                ", mediaCount=" + (media != null ? media.size() : 0) +
+                ", textFilesCount=" + (textFiles != null ? textFiles.size() : 0) +
+                ", utentiCount=" + (utenti != null ? utenti.size() : 0) +
+                ", invitiCount=" + (inviti != null ? "inviti.size()" : 0) +
+                '}';
+    }
 
 }

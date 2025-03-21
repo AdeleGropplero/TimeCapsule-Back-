@@ -5,7 +5,6 @@ import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
-import com.capstone.TimeCapsule.Model.Utente;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.utente.ProfiloUpdateDTO;
@@ -56,17 +55,21 @@ public class Controller {
     //---------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------
 
-    @PostMapping("/create-personal")
+    @PostMapping("/create-capsula")
     public ResponseEntity<?> createCapsula(
             @RequestParam("title") String title,
             @RequestParam("openDate") String openDate,
             @RequestParam("email") String email,
             @RequestParam(value = "message", required = false) String message,
             @RequestParam("pubblica") boolean pubblica,
+            @RequestParam("tipoCapsula") TipoCapsula tipoCapsula, // Nuovo parametro per distinguere il tipo
             @RequestParam(value = "media", required = false) Set<MultipartFile> mediaFiles,
             @RequestParam(value = "textFiles", required = false) Set<MultipartFile> textFiles,
-            @RequestParam("idUtente") String idUtente
+            @RequestParam("idUtente") String idUtente,
+            @RequestParam(value = "invitiMail", required = false) List<String> emails
     ) throws IOException {
+        System.out.println(emails);
+
         // Verifica della dimensione massima consentita
         final long MAX_SIZE = 3 * 1024 * 1024; // 3MB
 
@@ -77,7 +80,7 @@ public class Controller {
         dto.setEmail(email);
         dto.setMessage(message);
         dto.setPubblica(pubblica);
-        dto.setCapsula(TipoCapsula.PERSONALE);
+        dto.setCapsula(tipoCapsula);
 
         // lista per gli errori
         List<String> errori = new ArrayList<>();
@@ -128,6 +131,20 @@ public class Controller {
         // Salvataggio della capsula
         Capsula capsulaEntity = capsulaTravaso.dto_entity(dto, idUtente);
         Capsula savedCapsula = capsulaService.saveCap(capsulaEntity);
+
+        if (savedCapsula == null) {
+            // Gestisci l'errore: la capsula non è stata salvata correttamente
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel salvataggio della capsula.");
+        }
+
+        if (emails != null){
+            for(String mailInvitata : emails){
+                capsulaService.invitaUtente(savedCapsula, mailInvitata);
+            }
+        }
+        // 🔥 DEBUG: Stampa gli utenti della capsula
+        System.out.println("Utenti nella capsula: " + savedCapsula.getUtenti());
+
         emailService.sendEmail(email, "Capsula creata con successo!",
                 "La tua capsula '" + title + "' è stata creata. Riceverai un'email il giorno " + openDate + " quando sarà il momento di aprirla.");
         return ResponseEntity.ok(capsulaTravaso.entity_dto(savedCapsula));
@@ -144,6 +161,7 @@ public class Controller {
         CapsulaDTO capsulaDTO = capsulaTravaso.entity_dto(capsulaService.findById(idCap));
         return ResponseEntity.ok(capsulaDTO);
     }
+
 
     //---------------------------------------------------------------------------------------
     //UPDATE - PUT

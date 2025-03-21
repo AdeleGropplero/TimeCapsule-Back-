@@ -8,6 +8,7 @@ import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.UtenteService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class CapsulaTravaso {
     public CapsulaTravaso() {
     }
 
+    @Transactional
     public Capsula dto_entity(CapsulaDTO dto, String idUtente) {
         Capsula capsula = new Capsula();
 
@@ -43,7 +45,7 @@ public class CapsulaTravaso {
         if (utente == null) {
             throw new IllegalArgumentException("Utente non trovato con id: " + idUtente);
         }
-        capsula.setUtente(utente);
+        capsula.getUtenti().add(utente);
 
         // Mappatura dei file media
         List<VisualMedia> mediaList = dto.getMedia().stream()
@@ -66,6 +68,8 @@ public class CapsulaTravaso {
                     return textFile;
                 }).collect(Collectors.toList());
         capsula.setTextFiles(textFileList);
+
+        utente.getCapsule().add(capsula);
 
         return capsula;
     }
@@ -95,8 +99,8 @@ public class CapsulaTravaso {
         dto.setTextFiles(textFileDTOs);
 
         // Mappatura dell'utente (se presente)
-        if (capsula.getUtente() != null) {
-            dto.setUtenteId(capsula.getUtente().getId());
+        if (capsula.getUtenti() != null) {
+            dto.setUtentiIds(capsula.getUtenti().stream().map(Utente::getId).collect(Collectors.toSet()));
         }
 
         return dto;
