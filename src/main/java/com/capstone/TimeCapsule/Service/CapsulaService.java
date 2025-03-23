@@ -79,6 +79,10 @@ public class CapsulaService {
                 .orElseThrow(() -> new EntityNotFoundException("Capsula non trovata con ID: " + id));
         visualMediaRepository.deleteMediaByCapsulaId(capsulaId);
         textFilesRepository.deleteMediaByCapsulaId(capsulaId);
+
+        // Elimina prima gli inviti associati alla capsula
+        invitoRepository.deleteByCapsulaId(capsulaId);
+
         capsulaRepository.deleteCapsulaById(capsulaId);
     }
 
