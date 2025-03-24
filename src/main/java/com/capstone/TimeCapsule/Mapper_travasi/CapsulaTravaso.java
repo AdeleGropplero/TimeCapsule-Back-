@@ -54,6 +54,7 @@ public class CapsulaTravaso {
                     media.setUrl(fileDTO.getUrl());
                     media.setName(fileDTO.getName());
                     media.setType(fileDTO.getType());
+                    media.setCapsula(capsula);
                     return media;
                 }).collect(Collectors.toList());
         capsula.setMedia(mediaList);
@@ -65,6 +66,7 @@ public class CapsulaTravaso {
                     textFile.setUrl(fileDTO.getUrl());
                     textFile.setName(fileDTO.getName());
                     textFile.setType(fileDTO.getType());
+                    textFile.setCapsula(capsula);
                     return textFile;
                 }).collect(Collectors.toList());
         capsula.setTextFiles(textFileList);
