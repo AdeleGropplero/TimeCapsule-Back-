@@ -27,7 +27,7 @@ public class CapsulaTravaso {
     }
 
     @Transactional
-    public Capsula dto_entity(CapsulaDTO dto, String idUtente) {
+    public Capsula dto_entity(CapsulaDTO dto, Utente utente) {
         Capsula capsula = new Capsula();
 
         // Mappatura dei campi base
@@ -39,12 +39,12 @@ public class CapsulaTravaso {
         capsula.setPubblica(dto.getPubblica());
         capsula.setCapsula(dto.getCapsula());
 
-        // Recupero utente e gestione errore
+/*        // Recupero utente e gestione errore
         UUID id = UUID.fromString(idUtente);
         Utente utente = utenteService.findById(id);
         if (utente == null) {
             throw new IllegalArgumentException("Utente non trovato con id: " + idUtente);
-        }
+        }*/
         capsula.getUtenti().add(utente);
 
         // Mappatura dei file media

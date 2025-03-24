@@ -13,6 +13,7 @@ public class LoginResponse {
     private String token;
     private UUID id;
     private String fullName;
+    private String email;
 
 
 

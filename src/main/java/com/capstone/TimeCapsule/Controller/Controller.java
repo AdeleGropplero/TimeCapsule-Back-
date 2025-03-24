@@ -5,6 +5,7 @@ import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
+import com.capstone.TimeCapsule.Model.Utente;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
 import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.utente.ProfiloUpdateDTO;
@@ -73,11 +74,14 @@ public class Controller {
         // Verifica della dimensione massima consentita
         final long MAX_SIZE = 3 * 1024 * 1024; // 3MB
 
+        UUID id = UUID.fromString(idUtente);
+        Utente utente = utenteService.findById(id);
+
         CapsulaDTO dto = new CapsulaDTO();
         dto.setTitle(title);
         dto.setCreationDate(LocalDate.now());
         dto.setOpenDate(java.time.LocalDate.parse(openDate)); //openDate("") viene convertito in un oggetto LocalDate
-        dto.setEmail(email);
+        dto.setEmail(utente.getEmail());
         dto.setMessage(message);
         dto.setPubblica(pubblica);
         dto.setCapsula(tipoCapsula);
@@ -129,7 +133,7 @@ public class Controller {
         }
 
         // Salvataggio della capsula
-        Capsula capsulaEntity = capsulaTravaso.dto_entity(dto, idUtente);
+        Capsula capsulaEntity = capsulaTravaso.dto_entity(dto, utente);
         Capsula savedCapsula = capsulaService.saveCap(capsulaEntity);
 
         if (savedCapsula == null) {
@@ -145,7 +149,7 @@ public class Controller {
         // 🔥 DEBUG: Stampa gli utenti della capsula
         System.out.println("Utenti nella capsula: " + savedCapsula.getUtenti());
 
-        emailService.sendEmail(email, "Capsula creata con successo!",
+        emailService.sendEmail(utente.getEmail(), "Capsula creata con successo!",
                 "La tua capsula '" + title + "' è stata creata. Riceverai un'email il giorno " + openDate + " quando sarà il momento di aprirla.");
         return ResponseEntity.ok(capsulaTravaso.entity_dto(savedCapsula));
     }
@@ -172,6 +176,7 @@ public class Controller {
             @PathVariable String id,
             @RequestParam("title") String title,
             @RequestParam("message") String message,
+            @RequestParam("pubblica") Boolean pubblica,
             @RequestParam(value = "media", required = false) List<MultipartFile> media,
             @RequestParam(value = "textFiles", required = false) List<MultipartFile> textFiles,
             @RequestParam(value = "removeMedia", required = false) List<String> removeMediaUrls,
@@ -187,6 +192,7 @@ public class Controller {
             // Aggiorna i campi di testo
             existingCapsula.setTitle(title);
             existingCapsula.setMessage(message);
+            existingCapsula.setPubblica(pubblica);
 
             // Rimuove i file multimediali specificati dall'utente
             if (removeMediaUrls != null) {
@@ -209,6 +215,7 @@ public class Controller {
                     newMedia.setName(file.getOriginalFilename());
                     newMedia.setType(file.getContentType());
                     newMedia.setUrl(url);
+                    newMedia.setCapsula(existingCapsula);
                     existingCapsula.getMedia().add(newMedia);
                 }
             }
@@ -224,6 +231,7 @@ public class Controller {
                     newTextFile.setName(file.getOriginalFilename());
                     newTextFile.setType(file.getContentType());
                     newTextFile.setUrl(url);
+                    newTextFile.setCapsula(existingCapsula);
                     existingCapsula.getTextFiles().add(newTextFile);
                 }
             }

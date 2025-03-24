@@ -56,7 +56,8 @@ public class AuthController {
             String token = jwtUtil.generateToken(found);
             UUID id = found.getId();
             String fullName = found.getFullName();
-            LoginResponse loginResponse = new LoginResponse(token, id, fullName);
+            String email = found.getEmail();
+            LoginResponse loginResponse = new LoginResponse(token, id, fullName, email);
 
             // Restituisce una risposta con il corpo e il codice di stato OK (200)
             return ResponseEntity.ok(loginResponse);
