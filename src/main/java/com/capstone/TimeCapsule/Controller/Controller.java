@@ -3,6 +3,7 @@ package com.capstone.TimeCapsule.Controller;
 import com.capstone.TimeCapsule.Enum.TipoCapsula;
 import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
+import com.capstone.TimeCapsule.Model.ImgCapsula;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import com.capstone.TimeCapsule.Model.Utente;
@@ -166,6 +167,15 @@ public class Controller {
         return ResponseEntity.ok(capsulaDTO);
     }
 
+    //---------------------------------------------------------------------------------------
+    //immagini capsule
+    //---------------------------------------------------------------------------------------
+
+    @GetMapping("/immagini_caps")
+    public ResponseEntity<List<ImgCapsula>> getImg() {
+        List<ImgCapsula> imgs = capsulaService.findAllImageCap();
+        return ResponseEntity.ok(imgs);
+    }
 
     //---------------------------------------------------------------------------------------
     //UPDATE - PUT
@@ -278,6 +288,7 @@ public class Controller {
     public ResponseEntity<UtenteProfiloDTO> updateProfilo(@PathVariable String id, @RequestBody @Valid ProfiloUpdateDTO dto) {
         return ResponseEntity.ok(utenteService.patchProfilo(id, dto));
     }
+
 
 
 }

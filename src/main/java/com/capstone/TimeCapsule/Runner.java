@@ -4,7 +4,9 @@ import com.capstone.TimeCapsule.Enum.ERuoli;
 import com.capstone.TimeCapsule.Model.Ruolo;
 import com.capstone.TimeCapsule.Model.Utente;
 import com.capstone.TimeCapsule.Repository.UtenteRepository;
+import com.capstone.TimeCapsule.Service.CloudinaryService;
 import com.capstone.TimeCapsule.Service.RuoloService;
+import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,9 @@ public class Runner implements CommandLineRunner {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     @Value("${utente.admin.fullName}")
     private String fullName;
@@ -62,6 +67,23 @@ public class Runner implements CommandLineRunner {
             utente.setDataRegistrazione(LocalDate.now());
             utenteRepository.save(utente);
         }
+
+
+
+
+/*
+        CARICATE IN DB LE 20 IMMAGINI DELLE CAPSULE. LASCIARE COMMMENTATO O VERRANNO CARICATE OGNI VOLTA.
+        SE SERVE CARICARE ALTRE IMMAGINI DA UNA CARTELLA, SCOMMENTARE E CAMBIARE IL FILE PATH.
+
+        String folderPath = "/Users/adele/Desktop/CAPSTONE/Capsule_Img";
+
+        try {
+            // Carico le immagini dalla cartella
+            cloudinaryService.uploadImagesFromFolder(folderPath);
+            System.out.println("Immagini caricate con successo!");
+        } catch (IOException e) {
+            System.err.println("Errore nel caricamento delle immagini: " + e.getMessage());
+        }*/
 
     }
 }

@@ -4,6 +4,7 @@ import com.capstone.TimeCapsule.Exception.ResourceNotFoundException;
 import com.capstone.TimeCapsule.Exception.UtenteNonTrovatoException;
 import com.capstone.TimeCapsule.Mapper_travasi.CapsulaTravaso;
 import com.capstone.TimeCapsule.Model.Capsula;
+import com.capstone.TimeCapsule.Model.ImgCapsula;
 import com.capstone.TimeCapsule.Model.MediaFile.Invito;
 import com.capstone.TimeCapsule.Model.Utente;
 import com.capstone.TimeCapsule.Payload.CapsulaDTO;
@@ -42,6 +43,9 @@ public class CapsulaService {
 
     @Autowired
     private InvitoRepository invitoRepository;
+
+    @Autowired
+    private ImgCapRepository imgCapRepository;
 
     @Transactional
     public Capsula saveCap(Capsula caps) {
@@ -121,8 +125,9 @@ public class CapsulaService {
 
 
 
-
-
-
+//Capsula img.
+    public List<ImgCapsula> findAllImageCap(){
+        return imgCapRepository.findAll();
+    }
 
 }
