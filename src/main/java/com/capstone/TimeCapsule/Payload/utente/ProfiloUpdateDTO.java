@@ -12,4 +12,6 @@ public class ProfiloUpdateDTO {
     @Email
     @NotBlank
     private String email;
+
+    private String avatar;
 }

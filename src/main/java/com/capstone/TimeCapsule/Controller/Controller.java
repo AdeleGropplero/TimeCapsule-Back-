@@ -19,6 +19,7 @@ import com.capstone.TimeCapsule.Service.UtenteService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -161,11 +162,17 @@ public class Controller {
         return ResponseEntity.ok(caps);
     }
 
-    @GetMapping("/capsula/{idCap}")
+/*    @GetMapping("/capsula/{idCap}")
     public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
         CapsulaDTO capsulaDTO = capsulaTravaso.entity_dto(capsulaService.findById(idCap));
         return ResponseEntity.ok(capsulaDTO);
-    }
+    }*/
+@GetMapping("/capsula/{idCap}")
+public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
+    CapsulaDTO capsulaDTO = capsulaService.getInvitati(idCap);
+    return ResponseEntity.ok(capsulaDTO);
+}
+
 
     //---------------------------------------------------------------------------------------
     //immagini capsule
@@ -190,7 +197,8 @@ public class Controller {
             @RequestParam(value = "media", required = false) List<MultipartFile> media,
             @RequestParam(value = "textFiles", required = false) List<MultipartFile> textFiles,
             @RequestParam(value = "removeMedia", required = false) List<String> removeMediaUrls,
-            @RequestParam(value = "removeTextFiles", required = false) List<String> removeTextFileUrls
+            @RequestParam(value = "removeTextFiles", required = false) List<String> removeTextFileUrls,
+            @RequestParam(value = "addMail", required = false) List<String> newInviti
     ) {
         try {
             // Trova la capsula esistente
@@ -245,9 +253,20 @@ public class Controller {
                     existingCapsula.getTextFiles().add(newTextFile);
                 }
             }
-
             // Salva la capsula aggiornata
-            capsulaService.saveCap(existingCapsula);
+            Capsula savedCapsula = capsulaService.saveCap(existingCapsula);
+
+            if (savedCapsula == null) {
+                // Gestisci l'errore: la capsula non è stata salvata correttamente
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel salvataggio della capsula.");
+            }
+
+            if (newInviti != null){
+                for(String mailInvitata : newInviti){
+                    capsulaService.invitaUtente(savedCapsula, mailInvitata);
+                }
+            }
+
             return ResponseEntity.ok("Capsula aggiornata con successo!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -285,7 +304,24 @@ public class Controller {
     }
 
     @PatchMapping("/profilo/{id}")
-    public ResponseEntity<UtenteProfiloDTO> updateProfilo(@PathVariable String id, @RequestBody @Valid ProfiloUpdateDTO dto) {
+    public ResponseEntity<UtenteProfiloDTO> updateProfilo(
+            @PathVariable String id,
+            @RequestParam String fullName,
+            @RequestParam String email,
+            @RequestParam(value = "avatar", required = false) MultipartFile imgProfilo) throws IOException {
+
+        ProfiloUpdateDTO dto = new ProfiloUpdateDTO();
+        dto.setFullName(fullName);
+        dto.setEmail(email);
+
+        if (imgProfilo != null && !imgProfilo.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(imgProfilo);
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                dto.setAvatar(imageUrl);
+            } else {
+                throw new RuntimeException("Errore nel caricamento dell'avatar.");
+            }}
+
         return ResponseEntity.ok(utenteService.patchProfilo(id, dto));
     }
 

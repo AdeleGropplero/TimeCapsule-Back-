@@ -39,6 +39,9 @@ public class Utente implements UserDetails {
     @ManyToMany(mappedBy = "utenti", cascade = CascadeType.ALL)
     private List<Capsula> capsule = new ArrayList<>();
 
+    @Column(length = 500) // URL può essere lungo
+    private String avatar;
+
     public Utente(String fullName, String email, String password) {
         this.fullName = fullName;
         this.dataRegistrazione = LocalDate.now();

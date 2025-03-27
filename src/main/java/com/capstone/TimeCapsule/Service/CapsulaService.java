@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -99,6 +100,8 @@ public class CapsulaService {
             cap.getUtenti().add(utente);
             capsulaRepository.save(cap);
 
+            emailService.sendEmail(email, "Hai ricevuto un invito per partecipare ad una capsula del tempo!", "Vai nella sezione `le mie caps` e aggingi i contenuti che desideri!");
+
             // 🔥 DEBUG: Stampa conferma aggiunta
             System.out.println("Aggiunto utente: " + utente.getEmail() + " alla capsula " + cap.getId());
 
@@ -108,6 +111,7 @@ public class CapsulaService {
             invito.setEmail(email);
             invito.setCapsula(cap);
             invitoRepository.save(invito);
+            capsulaRepository.save(cap);
 
             // 🔥 DEBUG: Stampa conferma invito
             System.out.println("Creato invito per: " + email + " alla capsula " + cap.getId());
@@ -124,9 +128,25 @@ public class CapsulaService {
 */
 
 
+    public CapsulaDTO getInvitati(String idCapsula) {
+        UUID id = UUID.fromString(idCapsula);
+        Capsula cap = capsulaRepository.findById(id).orElseThrow(() -> new RuntimeException("Capsula non trovata con id: " + id));
+        CapsulaDTO capDTO = capsulaTravaso.entity_dto(cap);
 
-//Capsula img.
-    public List<ImgCapsula> findAllImageCap(){
+        List<UUID> invitatiId = cap.getUtenti().stream()
+                .map(utente -> utente.getId())
+                .collect(Collectors.toList());
+        List<String> emailInvitati = invitatiId.stream().map(idUtente -> {
+            Utente utente = utenteRepository.findById(idUtente).orElseThrow(() -> new UtenteNonTrovatoException("Utente non trovato..."));
+            return utente.getFullName() + "  - (" + utente.getEmail() + ")." ;
+        }).collect(Collectors.toList());
+
+        capDTO.setInvitati(emailInvitati);
+        return capDTO;
+    }
+
+    //Capsula img.
+    public List<ImgCapsula> findAllImageCap() {
         return imgCapRepository.findAll();
     }
 

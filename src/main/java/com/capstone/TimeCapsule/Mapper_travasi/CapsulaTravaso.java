@@ -1,6 +1,7 @@
 package com.capstone.TimeCapsule.Mapper_travasi;
 
 import com.capstone.TimeCapsule.Model.Capsula;
+import com.capstone.TimeCapsule.Model.MediaFile.Invito;
 import com.capstone.TimeCapsule.Model.MediaFile.TextFile;
 import com.capstone.TimeCapsule.Model.MediaFile.VisualMedia;
 import com.capstone.TimeCapsule.Model.Utente;
@@ -9,9 +10,11 @@ import com.capstone.TimeCapsule.Payload.TextFileDTO;
 import com.capstone.TimeCapsule.Payload.VisualMediaDTO;
 import com.capstone.TimeCapsule.Service.UtenteService;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -104,7 +107,14 @@ public class CapsulaTravaso {
         if (capsula.getUtenti() != null) {
             dto.setUtentiIds(capsula.getUtenti().stream().map(Utente::getId).collect(Collectors.toSet()));
         }
-
+        // SOLUZIONE: Caricamento sicuro degli inviti
+        List<String> invitatiEmail = new ArrayList<>();
+        if (Hibernate.isInitialized(capsula.getInviti())) {
+            invitatiEmail = capsula.getInviti().stream()
+                    .map(Invito::getEmail)
+                    .collect(Collectors.toList());
+        }
+        dto.setInvitati(invitatiEmail);
         return dto;
     }
 }

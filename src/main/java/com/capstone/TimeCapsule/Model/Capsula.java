@@ -59,6 +59,7 @@ public class Capsula {
     @OneToMany(mappedBy = "capsula", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Invito> inviti = new HashSet<>();
 
+
     //-------------------------------------------------
 
 

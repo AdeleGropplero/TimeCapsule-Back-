@@ -1,6 +1,7 @@
 package com.capstone.TimeCapsule.Repository;
 
 import com.capstone.TimeCapsule.Model.Capsula;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -26,4 +28,12 @@ public interface CapsulaRepository extends JpaRepository<Capsula, UUID> {
     @Modifying
     @Query("DELETE FROM Capsula c WHERE c.id = :id")
     void deleteCapsulaById(@Param("id") UUID id);
+
+    /*@EntityGraph(attributePaths = "inviti")
+    Optional<Capsula> findWithInvitiById(UUID id);
+    L'attributePaths nell'annotation @EntityGraph specifica quali relazioni (o "percorsi di attributi")
+    dell'entità devono essere caricati eagermente (immediatamente) insieme all'entità principale.*/
+
+    @Query("SELECT c FROM Capsula c LEFT JOIN FETCH c.inviti WHERE c.id = :id")
+    Optional<Capsula> findByIdWithInviti(@Param("id") UUID id);
 }

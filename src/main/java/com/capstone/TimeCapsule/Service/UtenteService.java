@@ -110,7 +110,10 @@ public class UtenteService {
 
         utente.setFullName(dto.getFullName());
         utente.setEmail(dto.getEmail());
-
+        if (dto.getAvatar() != null) {
+            utente.setAvatar(dto.getAvatar());  // Salva il nuovo avatar
+        }
+        utenteRepository.save(utente);
         return profiloTravaso.entity_dto(utente);
     }
 

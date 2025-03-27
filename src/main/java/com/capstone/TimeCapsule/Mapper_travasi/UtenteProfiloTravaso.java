@@ -38,6 +38,7 @@ public class UtenteProfiloTravaso {
                 utente.getFullName(),
                 utente.getEmail(),
                 utente.getDataRegistrazione(),
+                utente.getAvatar(),
                 numCapsulePersonali,
                 numCapsuleGruppo,
                 numCapsuleEvento

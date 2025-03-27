@@ -29,4 +29,13 @@ public class UtenteDTO {
     @NotBlank(message = "La password è obbligatoria")
     @Size(min = 8, message = "La password deve avere almeno 8 caratteri")
     private String password;
+
+    private String avatar;
+
+    public UtenteDTO(String fullName, LocalDate dataRegistrazione, String email, String password) {
+        this.fullName = fullName;
+        this.dataRegistrazione = dataRegistrazione;
+        this.email = email;
+        this.password = password;
+    }
 }
