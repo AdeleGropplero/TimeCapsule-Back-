@@ -143,8 +143,8 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel salvataggio della capsula.");
         }
 
-        if (emails != null){
-            for(String mailInvitata : emails){
+        if (emails != null) {
+            for (String mailInvitata : emails) {
                 capsulaService.invitaUtente(savedCapsula, mailInvitata);
             }
         }
@@ -158,20 +158,22 @@ public class Controller {
 
     @GetMapping("/le-mie-caps/{id}")
     public ResponseEntity<?> getCaps(@PathVariable String id) {
-       List<CapsulaDTO> caps = capsulaService.findAllById(id);
+        List<CapsulaDTO> caps = capsulaService.findAllById(id);
         return ResponseEntity.ok(caps);
     }
 
-/*    @GetMapping("/capsula/{idCap}")
-    public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
-        CapsulaDTO capsulaDTO = capsulaTravaso.entity_dto(capsulaService.findById(idCap));
+    /*
+        @GetMapping("/capsula/{idCap}")
+        public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
+            CapsulaDTO capsulaDTO = capsulaTravaso.entity_dto(capsulaService.findById(idCap));
+            return ResponseEntity.ok(capsulaDTO);
+        }
+    */
+    @GetMapping("/capsula/{idCap}")
+    public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap) {
+        CapsulaDTO capsulaDTO = capsulaService.getInvitati(idCap);
         return ResponseEntity.ok(capsulaDTO);
-    }*/
-@GetMapping("/capsula/{idCap}")
-public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
-    CapsulaDTO capsulaDTO = capsulaService.getInvitati(idCap);
-    return ResponseEntity.ok(capsulaDTO);
-}
+    }
 
 
     //---------------------------------------------------------------------------------------
@@ -261,8 +263,8 @@ public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore nel salvataggio della capsula.");
             }
 
-            if (newInviti != null){
-                for(String mailInvitata : newInviti){
+            if (newInviti != null) {
+                for (String mailInvitata : newInviti) {
                     capsulaService.invitaUtente(savedCapsula, mailInvitata);
                 }
             }
@@ -320,11 +322,20 @@ public ResponseEntity<CapsulaDTO> getSelectedCap(@PathVariable String idCap){
                 dto.setAvatar(imageUrl);
             } else {
                 throw new RuntimeException("Errore nel caricamento dell'avatar.");
-            }}
+            }
+        }
 
         return ResponseEntity.ok(utenteService.patchProfilo(id, dto));
     }
 
+    //---------------------------------------------------------------------------------------
+    // SEARCH BAR
+    //---------------------------------------------------------------------------------------
 
+    @GetMapping("/search-bar")
+    public ResponseEntity<List<CapsulaDTO>> findPubbliche(@RequestParam String input){
+        List<CapsulaDTO> caps = capsulaService.findPubbliche(input);
+        return ResponseEntity.ok(caps);
+    }
 
 }

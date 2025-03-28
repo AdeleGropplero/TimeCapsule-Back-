@@ -145,6 +145,12 @@ public class CapsulaService {
         return capDTO;
     }
 
+    //Search bar
+    public List<CapsulaDTO> findPubbliche(String input){
+       List<Capsula> caps = capsulaRepository.findByPubblicaTrueAndTitleContainingIgnoreCase(input);
+       return caps.stream().map(capsula -> capsulaTravaso.entity_dto(capsula)).collect(Collectors.toList());
+    }
+
     //Capsula img.
     public List<ImgCapsula> findAllImageCap() {
         return imgCapRepository.findAll();

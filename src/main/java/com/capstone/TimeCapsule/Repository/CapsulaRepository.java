@@ -36,4 +36,12 @@ public interface CapsulaRepository extends JpaRepository<Capsula, UUID> {
 
     @Query("SELECT c FROM Capsula c LEFT JOIN FETCH c.inviti WHERE c.id = :id")
     Optional<Capsula> findByIdWithInviti(@Param("id") UUID id);
+
+    List<Capsula> findByPubblicaTrueAndTitleContainingIgnoreCase(String input);
+
+/*
+SELECT * FROM capsula
+WHERE pubblica = true
+AND LOWER(titolo) LIKE LOWER('%input%');
+*/
 }
